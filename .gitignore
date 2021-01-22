@@ -1,3 +1,14 @@
+#cosmickitten
+bin/
+lib/
+input/
+mp3_list.txt
+result.txt
+wav/
+*.mp3
+*.wav
+pyvenv.cfg
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
