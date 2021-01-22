@@ -27,7 +27,7 @@ def create_dirs():
     return input_dirs
 
 def get_mp3(input_dirs):
-    print("Поиск ",input_dirs["input_dir"])
+    print("Find ",input_dirs["input_dir"])
     mp3_list=os.listdir(path=input_dirs["input_dir"])
     print("Found : " , mp3_list)
     for i in mp3_list:
@@ -47,7 +47,7 @@ def recog(wav_list):
             
             with voice_track as audio_file:
                 audio_content = r.record(audio_file)
-            print("Recognition of "+ f'{i}' +" из "+ str(len(wav_list)-1)) 
+            print("Recognition  "+ f'{i}' +" of "+ str(len(wav_list)-1)) 
             speech = r.recognize_google(audio_content, language = 'ru')
             
             with open('result.txt', 'a') as file:
