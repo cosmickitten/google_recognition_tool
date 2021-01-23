@@ -21,6 +21,9 @@ WAVDIR = os.path.join(PATH, "wav")
 def first_chars(x):
     return (x[:2:])
 
+def last_chars(x):
+    return (x[3:3:])
+
 
 def create_dirs():
     try:
@@ -34,13 +37,17 @@ def create_dirs():
     print("Directory sucsessfully created!\n")
 
 
-def get_files(DIR):
+def get_mp3_files(DIR):
     files = sorted(os.listdir(path=DIR), key=first_chars)
+    return files
+
+def get_wav_files(DIR):
+    files = sorted(os.listdir(path=DIR), key=last_chars)
     return files
 
 def get_mp3(INPUTDIR):
     
-    mp3_list = get_files(INPUTDIR)
+    mp3_list = get_mp3_files(INPUTDIR)
     
     return mp3_list
 
@@ -55,7 +62,7 @@ def create_mp3_list_file(mp3_list):
 
 
 def get_wav(WAVDIR):
-    wav_list = get_files(WAVDIR)
+    wav_list = get_wav_files(WAVDIR)
     return wav_list
 
 
@@ -95,7 +102,7 @@ create_mp3_list_file(mp3_list)
 os.system('ffmpeg -f concat  -safe 0  -i mp3_list.txt -c copy ./input/out.mp3')
 os.system('ffmpeg -i ./input/out.mp3 ./input/1.wav ')
 os.system(
-    'ffmpeg -i ./input/1.wav -f segment -segment_time 59 -c copy ./wav/out%d.wav'
+    'ffmpeg -i ./input/1.wav -f segment -segment_time 59 -c copy ./wav/out%3d.wav'
 )
 wav_list=get_wav(WAVDIR)
 print(wav_list)
