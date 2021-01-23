@@ -21,6 +21,7 @@ WAVDIR = os.path.join(PATH, "wav")
 def first_chars(x):
     return (x[:2:])
 
+
 def last_chars(x):
     return (x[3:3:])
 
@@ -41,15 +42,17 @@ def get_mp3_files(DIR):
     files = sorted(os.listdir(path=DIR), key=first_chars)
     return files
 
+
 def get_wav_files(DIR):
     files = sorted(os.listdir(path=DIR), key=last_chars)
     return files
 
 def get_mp3(INPUTDIR):
-    
+
     mp3_list = get_mp3_files(INPUTDIR)
-    
+
     return mp3_list
+
 
 def create_mp3_list_file(mp3_list):
     print(type(mp3_list))
@@ -60,23 +63,22 @@ def create_mp3_list_file(mp3_list):
                            os.path.join(INPUTDIR, i) + "'\n")
 
 
-
 def get_wav(WAVDIR):
     wav_list = get_wav_files(WAVDIR)
     return wav_list
 
 
 def recog(wav_list):
-    r=sr.Recognizer()
+    r = sr.Recognizer()
     # i=12
     for i in wav_list:
         try:
-            voice_track=sr.AudioFile(f'./wav/{i}')
+            voice_track = sr.AudioFile(f'./wav/{i}')
 
             with voice_track as audio_file:
-                audio_content=r.record(audio_file)
+                audio_content = r.record(audio_file)
             print("Recognition  " + f'{i}' + " of " + str(len(wav_list) - 1))
-            speech=r.recognize_google(audio_content, language='ru')
+            speech = r.recognize_google(audio_content, language='ru')
 
             with open('result.txt', 'a') as file:
                 file.write(speech)
@@ -91,22 +93,36 @@ def recog(wav_list):
         sleep(3)
 
 
-os.system('rm result.txt')
-os.system('rm mp3_list.txt')
-os.system('rm  ./input/1.wav')
-os.system('rm  ./input/out.mp3')
-os.system('rm  ./wav/*')
+def clear():
+
+    for file in generates:
+        try:
+            os.remove(file)
+            print(f'{file} removed')
+        except FileNotFoundError:
+            print(f'{file} not found')
+            pass
+
+
+generates = ['result.txt', 'mp3_list.txt', os.path.join(
+    INPUTDIR, '1.wav'), os.path.join(INPUTDIR, 'out.mp3')]
+wav_list = get_wav(WAVDIR)
+for wav in wav_list:
+    generates.append(os.path.join(WAVDIR, wav))
+
+
+clear()
 create_dirs()
-mp3_list=get_mp3(INPUTDIR)
+mp3_list = get_mp3(INPUTDIR)
 create_mp3_list_file(mp3_list)
-os.system('ffmpeg -f concat  -safe 0  -i mp3_list.txt -c copy ./input/out.mp3')
+os.system('ffmpeg -f concat  -safe 0 -i mp3_list.txt -c copy ./input/out.mp3')
 os.system('ffmpeg -i ./input/out.mp3 ./input/1.wav ')
 os.system(
     'ffmpeg -i ./input/1.wav -f segment -segment_time 59 -c copy ./wav/out%3d.wav'
 )
-wav_list=get_wav(WAVDIR)
-print(wav_list)
-#recog(wav_list)
-#with open('result.txt', 'a') as file:
+wav_list = get_wav(WAVDIR)
+
+# recog(wav_list)
+# with open('result.txt', 'a') as file:
 #    file.write("\n")
 #    file.write("\n")
