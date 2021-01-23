@@ -68,33 +68,62 @@ def get_wav(WAVDIR):
     return wav_list
 
 
-def recog(wav_list):
+#def recog(wav_list):
+#    r = sr.Recognizer()
+#    # i=12
+#    for i in wav_list:
+#        try:
+#            voice_track = sr.AudioFile(os.path.join(WAVDIR, i))#
+#
+ #           with voice_track as audio_file:
+#                audio_content = r.record(audio_file)
+#            print("Recognition  " + f'{i}' + " of " + str(len(wav_list) - 1))
+#            speech = r.recognize_google(audio_content, language='ru')
+#
+#            with open('result.txt', 'a') as file:
+#                file.write(speech)
+#        except sr.UnknownValueError:
+#            print(f"{i} -- Recognition error  ")
+#            with open('result.txt', 'a') as file:
+#                file.write("\n")
+#                file.write("\n")
+#                file.write(f"{i} -- Recognition error \n")
+#                file.write("\n")
+#
+#        sleep(3)
+
+
+
+def recog(wav_file):
+    retry = 5
     r = sr.Recognizer()
-    # i=12
-    for i in wav_list:
+    while retry > 0:
         try:
-            voice_track = sr.AudioFile(f'./wav/{i}')
+            voice_track = sr.AudioFile(os.path.join(WAVDIR, wav_file))
 
             with voice_track as audio_file:
                 audio_content = r.record(audio_file)
-            print("Recognition  " + f'{i}' + " of " + str(len(wav_list) - 1))
+            print("Recognition  " + f'{wav_file}' + " of " + str(len(wav_list) - 1))
             speech = r.recognize_google(audio_content, language='ru')
+            retry = 0
 
             with open('result.txt', 'a') as file:
                 file.write(speech)
         except sr.UnknownValueError:
-            print(f"{i} -- Recognition error  ")
-            with open('result.txt', 'a') as file:
-                file.write("\n")
-                file.write("\n")
-                file.write(f"{i} -- Recognition error \n")
-                file.write("\n")
+            print(f"{wav_file} -- Recognition error! Retry... "+ str(retry))
+            if retry == 0:
+                with open('result.txt', 'a') as file:
+                    file.write("\n")
+                    file.write("\n")
+                    file.write(f"{wav_file} -- Recognition error \n")
+                    file.write("\n")
+            else:
+                 retry = retry -1
 
-        sleep(3)
 
 
 def clear():
-
+    print('Clearing generates:\n')
     for file in generates:
         try:
             os.remove(file)
@@ -121,8 +150,10 @@ os.system(
     'ffmpeg -i ./input/1.wav -f segment -segment_time 59 -c copy ./wav/out%3d.wav'
 )
 wav_list = get_wav(WAVDIR)
+for wav in wav_list:
+    recog(wav)
+    sleep (1)
 
-# recog(wav_list)
-# with open('result.txt', 'a') as file:
-#    file.write("\n")
-#    file.write("\n")
+with open('result.txt', 'a') as file:
+    file.write("\n")
+    file.write("\n")
