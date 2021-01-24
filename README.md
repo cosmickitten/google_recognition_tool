@@ -2,6 +2,13 @@
 Simple speech recognition tool based on google api.
 
 
+Please help me.
 
 
-Please help me to make it good looking.
+TO DO:
+
+- cli params
+
+- cross-platform
+
+- refactoring
