@@ -1,11 +1,5 @@
 #!/bin/python
-
-
-#   ffmpeg -i "concat:1.mp3|2.mp3|3.mp3" -acodec copy out.mp3
-
-#   ffmpeg -i out.mp3 1.wav
-
-#   ffmpeg -i 1.wav -f segment -segment_time 59 -c copy out%d.wav
+ -segment_time 59 -c copy out%d.wav
 
 from time import sleep
 import speech_recognition as sr
@@ -20,23 +14,25 @@ WAVDIR = os.path.join(PATH, "wav")
 
 
 def first_chars(x):
-    return (x[:2:])
+    return (x[:2:]) #01.mp3 02.mp3 etc..
 
 
 def last_chars(x):
-    return (x[3:3:])
+    return (x[3:3:]) #out002.wav
 
 
 def create_dirs():
     try:
         os.mkdir(path=INPUTDIR)
+        print(f"Directory {INPUTDIR} sucsessfully created!\n")
     except FileExistsError:
-        print("Directory input exists!\n")
+        print(f"Directory {INPUTDIR} exists!\n")
     try:
         os.mkdir(path=WAVDIR)
+        print(f"Directory {WAVDIR} sucsessfully created!\n")
     except FileExistsError:
-        print("Directory wav exists!\n")
-    print("Directory sucsessfully created!\n")
+        print(f"Directory {WAVDIR} exists!\n")
+    
 
 
 def get_mp3_files(DIR):
@@ -121,9 +117,6 @@ clear()
 create_dirs()
 mp3_list = get_mp3(INPUTDIR)
 create_mp3_list_file(mp3_list)
-#os.system('ffmpeg -f concat  -safe 0 -i mp3_list.txt -c copy ./input/out.mp3')
-#os.system('ffmpeg -i ./input/out.mp3 ./input/1.wav ')
-#os.system('ffmpeg -i ./input/1.wav -f segment -segment_time 59 -c copy ./wav/out%3d.wav')
 subprocess.run(['ffmpeg', '-f', 'concat', '-safe', '0', '-i',
                 'mp3_list.txt', '-c', 'copy', os.path.join(INPUTDIR, 'out.mp3')])
 subprocess.run(['ffmpeg', '-i', os.path.join(INPUTDIR,
