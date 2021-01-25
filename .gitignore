@@ -2,6 +2,7 @@
 bin/
 lib/
 input/
+result/
 mp3_list.txt
 result.txt
 wav/

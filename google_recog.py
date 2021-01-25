@@ -1,7 +1,7 @@
 #!/bin/python
- -segment_time 59 -c copy out%d.wav
 
-from time import sleep
+
+import time
 import speech_recognition as sr
 import os
 import subprocess
@@ -12,13 +12,18 @@ INPUTDIR = os.path.join(PATH, "input")
 
 WAVDIR = os.path.join(PATH, "wav")
 
+RESULTDIR = os.path.join(PATH, "result")
+
+
+RESULTFILENAME = time.strftime("%Y-%m-%d--%H-%M-%S")
+
 
 def first_chars(x):
-    return (x[:2:]) #01.mp3 02.mp3 etc..
+    return (x[:2:])  # 01.mp3 02.mp3 etc..
 
 
 def last_chars(x):
-    return (x[3:3:]) #out002.wav
+    return (x[3:3:])  # out002.wav
 
 
 def create_dirs():
@@ -32,7 +37,11 @@ def create_dirs():
         print(f"Directory {WAVDIR} sucsessfully created!\n")
     except FileExistsError:
         print(f"Directory {WAVDIR} exists!\n")
-    
+    try:
+        os.mkdir(path=RESULTDIR)
+        print(f"Directory {RESULTDIR} sucsessfully created!\n")
+    except FileExistsError:
+        print(f"Directory {RESULTDIR} exists!\n")
 
 
 def get_mp3_files(DIR):
@@ -66,9 +75,9 @@ def get_wav(WAVDIR):
 
 
 def recog(wav_file):
-    retry = 5
+    retry = 1
     r = sr.Recognizer()
-    while retry > 0:
+    while retry < 6:
         try:
             voice_track = sr.AudioFile(os.path.join(WAVDIR, wav_file))
 
@@ -77,26 +86,25 @@ def recog(wav_file):
             print("Recognition  " + f'{wav_file}' +
                   " of " + str(len(wav_list) - 1))
             speech = r.recognize_google(audio_content, language='ru')
-            retry = 0
+            retry = 6
 
-            with open('result.txt', 'a') as file:
+            with open(os.path.join(RESULTDIR, RESULTFILENAME ), 'a') as file:
                 file.write(speech)
         except sr.UnknownValueError:
             print(f"{wav_file} -- Recognition error! Retry... " + str(retry))
-            if retry == 0:
-                with open('result.txt', 'a') as file:
-                    file.write("\n")
-                    file.write("\n")
-                    file.write(f"{wav_file} -- Recognition error \n")
-                    file.write("\n")
-            else:
-                retry = retry - 1
+            with open(os.path.join(RESULTDIR, RESULTFILENAME), 'a') as file:
+                file.write("\n")
+                file.write("\n")
+                file.write(f"{wav_file} -- Recognition error \n")
+                file.write("\n")
+
+            retry = retry + 1
 
 
 def clear():
     print('Clearing generates:\n')
     generates = ['result.txt', 'mp3_list.txt', os.path.join(
-    INPUTDIR, '1.wav'), os.path.join(INPUTDIR, 'out.mp3')]
+        INPUTDIR, '1.wav'), os.path.join(INPUTDIR, 'out.mp3')]
     wav_list = get_wav(WAVDIR)
     for wav in wav_list:
         generates.append(os.path.join(WAVDIR, wav))
@@ -112,7 +120,6 @@ def clear():
 
 
 
-
 clear()
 create_dirs()
 mp3_list = get_mp3(INPUTDIR)
@@ -122,12 +129,12 @@ subprocess.run(['ffmpeg', '-f', 'concat', '-safe', '0', '-i',
 subprocess.run(['ffmpeg', '-i', os.path.join(INPUTDIR,
                                              'out.mp3'), os.path.join(INPUTDIR, '1.wav')])
 subprocess.run(['ffmpeg', '-i', os.path.join(INPUTDIR, '1.wav'), '-f', 'segment',
-            '-segment_time', '59', '-c', 'copy', os.path.join(WAVDIR, 'out%3d.wav')])
+                '-segment_time', '59', '-c', 'copy', os.path.join(WAVDIR, 'out%3d.wav')])
 
 wav_list = get_wav(WAVDIR)
 for wav in wav_list:
     recog(wav)
-    sleep(1)
+    time.sleep(1)
 
 with open('result.txt', 'a') as file:
     file.write("\n")
