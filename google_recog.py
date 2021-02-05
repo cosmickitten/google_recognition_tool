@@ -107,7 +107,11 @@ def clear():
         INPUTDIR, '1.wav'), os.path.join(INPUTDIR, 'out.mp3')]
     wav_list = get_wav(WAVDIR)
     for wav in wav_list:
-        generates.append(os.path.join(WAVDIR, wav))
+        try:
+            generates.append(os.path.join(WAVDIR, wav))
+        except FileNotFoundError:
+            print(f'{wav} not found')
+    
         for file in generates:
             try:
                 os.remove(file)
