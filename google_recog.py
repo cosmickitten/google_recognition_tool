@@ -124,7 +124,7 @@ def clear():
 
 
 
-clear()
+
 create_dirs()
 mp3_list = get_mp3(INPUTDIR)
 create_mp3_list_file(mp3_list)
@@ -143,3 +143,4 @@ for wav in wav_list:
 with open('result.txt', 'a') as file:
     file.write("\n")
     file.write("\n")
+clear()
