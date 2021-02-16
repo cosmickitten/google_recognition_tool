@@ -12,9 +12,9 @@ python3 voice_recog.py -h
 ```
 python3 voice_recog.py -d ~/Downloads/
 ```
-Найдет в папке Downloads все mp3  файлы и попытается их распознать как один текст.
+Найдет в папке Downloads все mp3  файлы и попытается их распознать как один текст. Результат распознования сохранится в текущем каталоге с именем result.txt
 ```
-python3 voice_recog.py -f ~/Downloads/0[1-5].mp3 -0 ~/Documents/лекция.txt
+python3 voice_recog.py -f ~/Downloads/0[1-5].mp3 -o ~/Documents/лекция.txt
 ``````
 Отправит на распознование файлы 01.mp3 02.mp3 04.mp3 05.mp3  и сохранит результат распознования в файл лекция.txt
 ```
