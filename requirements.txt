@@ -1,1 +1,2 @@
+progress==1.5
 SpeechRecognition==3.8.1
