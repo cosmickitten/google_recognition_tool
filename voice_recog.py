@@ -59,14 +59,13 @@ def get_wav_order(list, tmp_dir):
     bar = IncrementalBar('Getting WAV order  \t', max=len(list))
 
     for file in list:
-
+        bar.next()
         duration = get_track_duration(file)
         if duration > 59:
             segment_file(file, tmp_dir)
         else:
             wavfile = os.path.join(
                 tmp_dir, ((file.split('/')[-1]).split('.')[0]) + '000.wav')
-        bar.next()
     bar.finish()
 
 
@@ -127,11 +126,8 @@ def get_file_list(tmp_dir, list_of_extentions):
 
 
 def dir_checker(directory):
-    print("Checking directory")
     if os.path.isdir(directory):
-        print("Directory: ")
         print(directory)
-        print("Checking directory:\t OK")
     else:
         print("Directory: ", directory, "doesn't exists!")
         parser.print_help()
@@ -148,6 +144,11 @@ def args_to_file_list(raw_file_list):
     except TypeError:
         pass
     return file_list
+
+
+def rm_empty_file(filepath):
+    if os.path.isfile(filepath) and os.path.getsize(filepath) == 0:
+        os.remove(filepath)
 
 def cli_parser():
 
@@ -189,6 +190,10 @@ fl = args_to_file_list(raw_file_list)
 if len(fl) == 0:
     fl = os.listdir(path=wdir)
 input_files = get_input_file_list(fl)
+if len(input_files) == 0:
+    print('No input data! ')
+    rm_empty_file(outputfile)
+    sys.exit(2)
 
 create_file_with_input_path(input_files, file_for_ffmpeg)
 get_wav_order(input_files, tmp_dir)
@@ -208,11 +213,12 @@ for file in wav_list:
 bar.finish()
 # rm_dir(tmp_dir)
 txt = get_file_list(tmp_dir, txt_extensions)
-
-with open(outputfile, 'w') as outfile:
-    for fname in txt:
-        with open(fname) as infile:
-            for line in infile:
-                outfile.write(line)
-print('Result writed in: \n', outputfile)
+if len(txt) > 0:
+    with open(outputfile, 'w') as outfile:
+        for fname in txt:
+            with open(fname) as infile:
+                for line in infile:
+                    outfile.write(line)
+    print('Result writed in: \n', outputfile)
 rm_dir(tmp_dir)
+rm_empty_file(outputfile)
