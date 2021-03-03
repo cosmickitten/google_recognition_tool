@@ -24,3 +24,12 @@ python3 voice_recog.py -f ~/Downloads/0[1-5].mp3 -o ~/Documents/лекция.txt
 python3 voice_recog.py -t /mnt/media/
 ```
 Найдет в текущей папке все mp3 файлы, результат распознования сохранится в текущем каталоге с именем result.txt, а каталог /mnt/media/ будет использоваться для хранения промежуточных wav файлов необходимых для работы скрипта.
+
+## Установка:
+
+```
+git clone https://github.com/cosmickitten/google_recognition_tool.git
+cd google_recognition_tool
+pip install -r requirements.txt
+python3 voice_recog.py --help
+```
